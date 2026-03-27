@@ -30,6 +30,24 @@ import { DealsPage } from './pages/deals/DealsPage';
 // Chat Pages
 import { ChatPage } from './pages/chat/ChatPage';
 
+// Calendar Pages
+import { CalendarPage } from './pages/calendar/CalendarPage';
+import { AvailabilityPage } from './pages/calendar/AvailabilityPage';
+import { MeetingRequestsPage } from './pages/calendar/MeetingRequestsPage';
+
+// Video Call Pages
+import { VideoCallPage } from './pages/video/VideoCallPage';
+
+// Document Pages
+import { DocumentChamberPage } from './pages/documents/DocumentChamberPage';
+
+// Payment Pages
+import { WalletPage } from './pages/payment/WalletPage';
+import { PaymentPage } from './pages/payment/PaymentPage';
+
+// Security Pages
+import { SecuritySettingsPage } from './pages/security/SecuritySettingsPage';
+
 function App() {
   return (
     <AuthProvider>
@@ -88,6 +106,34 @@ function App() {
           <Route path="/chat" element={<DashboardLayout />}>
             <Route index element={<ChatPage />} />
             <Route path=":userId" element={<ChatPage />} />
+          </Route>
+          
+          {/* Calendar Routes */}
+          <Route path="/calendar" element={<DashboardLayout />}>
+            <Route index element={<CalendarPage />} />
+            <Route path="availability" element={<AvailabilityPage />} />
+            <Route path="requests" element={<MeetingRequestsPage />} />
+          </Route>
+          
+          {/* Video Call Routes */}
+          <Route path="/video-call" element={<DashboardLayout />}>
+            <Route path=":callId" element={<VideoCallPage />} />
+          </Route>
+          
+          {/* Document Chamber Routes */}
+          <Route path="/document-chamber" element={<DashboardLayout />}>
+            <Route index element={<DocumentChamberPage />} />
+          </Route>
+
+          {/* Wallet & Payment Routes */}
+          <Route path="/wallet" element={<DashboardLayout />}>
+            <Route index element={<WalletPage />} />
+            <Route path="payment" element={<PaymentPage />} />
+          </Route>
+
+          {/* Security Routes */}
+          <Route path="/security-settings" element={<DashboardLayout />}>
+            <Route index element={<SecuritySettingsPage />} />
           </Route>
           
           {/* Redirect root to login */}

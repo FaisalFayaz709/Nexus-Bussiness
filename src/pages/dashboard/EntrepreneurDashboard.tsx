@@ -1,15 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Users, Bell, Calendar, TrendingUp, AlertCircle, PlusCircle } from 'lucide-react';
+import { Users, Bell, Calendar, TrendingUp, AlertCircle, PlusCircle, Video, Wallet } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Card, CardBody, CardHeader } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
 import { CollaborationRequestCard } from '../../components/collaboration/CollaborationRequestCard';
 import { InvestorCard } from '../../components/investor/InvestorCard';
+import { ConfirmedMeetingCard } from '../../components/calendar/ConfirmedMeetingCard';
 import { useAuth } from '../../context/AuthContext';
 import { CollaborationRequest } from '../../types';
 import { getRequestsForEntrepreneur } from '../../data/collaborationRequests';
-import { investors } from '../../data/users';
+import { investors, users } from '../../data/users';
+import { confirmedMeetings } from '../../data/confirmedMeetings';
+import { videoSessions } from '../../data/videoSessions';
+import { walletBalances } from '../../data/walletBalances';
+import { isAfter, startOfToday, parseISO } from 'date-fns';
 
 export const EntrepreneurDashboard: React.FC = () => {
   const { user } = useAuth();
@@ -35,6 +40,29 @@ export const EntrepreneurDashboard: React.FC = () => {
   if (!user) return null;
   
   const pendingRequests = collaborationRequests.filter(req => req.status === 'pending');
+  
+  // Get upcoming meetings for current user
+  const upcomingMeetings = confirmedMeetings
+    .filter((m) => m.participantIds.includes(user.id))
+    .filter((m) => isAfter(parseISO(m.startTime), startOfToday()))
+    .sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime())
+    .slice(0, 2);
+
+  // Get incoming video calls
+  const incomingCalls = videoSessions
+    .filter((call) => call.status === 'incoming')
+    .map((call) => ({
+      ...call,
+      otherUser: users.find((u) => u.id === (call.initiatorId === user.id ? call.participantId : call.initiatorId)),
+    }));
+
+  // Get wallet balance
+  const userWallet = walletBalances.find((wb) => wb.userId === user.id) || {
+    userId: user.id,
+    balance: 0,
+    currency: 'USD',
+    lastUpdated: new Date().toISOString(),
+  };
   
   return (
     <div className="space-y-6 animate-fade-in">
@@ -93,8 +121,48 @@ export const EntrepreneurDashboard: React.FC = () => {
               </div>
               <div>
                 <p className="text-sm font-medium text-accent-700">Upcoming Meetings</p>
-                <h3 className="text-xl font-semibold text-accent-900">2</h3>
+                <h3 className="text-xl font-semibold text-accent-900">{upcomingMeetings.length}</h3>
               </div>
+            </div>
+          </CardBody>
+        </Card>
+
+        <Card className="bg-blue-50 border border-blue-100">
+          <CardBody>
+            <div className="flex items-center">
+              <div className="p-3 bg-blue-100 rounded-full mr-4">
+                <Video size={20} className="text-blue-700" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-blue-700">Incoming Calls</p>
+                <h3 className="text-xl font-semibold text-blue-900">{incomingCalls.length}</h3>
+              </div>
+            </div>
+          </CardBody>
+        </Card>
+
+        <Card className="bg-green-50 border border-green-100">
+          <CardBody>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center flex-1">
+                <div className="p-3 bg-green-100 rounded-full mr-4">
+                  <Wallet size={20} className="text-green-700" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-green-700">Wallet Balance</p>
+                  <h3 className="text-xl font-semibold text-green-900">
+                    ${userWallet.balance.toLocaleString('en-US', {
+                      maximumFractionDigits: 0,
+                    })}
+                  </h3>
+                </div>
+              </div>
+              <Link
+                to="/wallet"
+                className="text-green-600 hover:text-green-700 text-sm font-medium"
+              >
+                View
+              </Link>
             </div>
           </CardBody>
         </Card>
@@ -147,27 +215,62 @@ export const EntrepreneurDashboard: React.FC = () => {
           </Card>
         </div>
         
-        {/* Recommended investors */}
+        {/* Upcoming Meetings */}
         <div className="space-y-4">
           <Card>
             <CardHeader className="flex justify-between items-center">
-              <h2 className="text-lg font-medium text-gray-900">Recommended Investors</h2>
-              <Link to="/investors" className="text-sm font-medium text-primary-600 hover:text-primary-500">
+              <h2 className="text-lg font-medium text-gray-900">Upcoming Meetings</h2>
+              <Link to="/calendar" className="text-sm font-medium text-primary-600 hover:text-primary-500">
                 View all
               </Link>
             </CardHeader>
             
-            <CardBody className="space-y-4">
-              {recommendedInvestors.map(investor => (
-                <InvestorCard
-                  key={investor.id}
-                  investor={investor}
-                  showActions={false}
-                />
-              ))}
+            <CardBody>
+              {upcomingMeetings.length > 0 ? (
+                <div className="space-y-4">
+                  {upcomingMeetings.map(meeting => (
+                    <ConfirmedMeetingCard
+                      key={meeting.id}
+                      meeting={meeting}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">
+                    <Calendar size={24} className="text-gray-500" />
+                  </div>
+                  <p className="text-gray-600">No upcoming meetings</p>
+                  <Link to="/calendar/requests" className="text-sm font-medium text-primary-600 hover:text-primary-500 mt-2 inline-block">
+                    Request a meeting
+                  </Link>
+                </div>
+              )}
             </CardBody>
           </Card>
         </div>
+      </div>
+      
+      {/* Recommended investors */}
+      <div>
+        <Card>
+          <CardHeader className="flex justify-between items-center">
+            <h2 className="text-lg font-medium text-gray-900">Recommended Investors</h2>
+            <Link to="/investors" className="text-sm font-medium text-primary-600 hover:text-primary-500">
+              View all
+            </Link>
+          </CardHeader>
+          
+          <CardBody className="space-y-4">
+            {recommendedInvestors.map(investor => (
+              <InvestorCard
+                key={investor.id}
+                investor={investor}
+                showActions={false}
+              />
+            ))}
+          </CardBody>
+        </Card>
       </div>
     </div>
   );

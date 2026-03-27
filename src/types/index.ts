@@ -68,6 +68,145 @@ export interface Document {
   ownerId: string;
 }
 
+export interface AvailabilitySlot {
+  id: string;
+  userId: string;
+  startTime: string; // ISO format
+  endTime: string;   // ISO format
+  dayOfWeek: number; // 0-6 (Sunday-Saturday)
+  isRecurring: boolean;
+  createdAt: string;
+}
+
+export interface MeetingRequest {
+  id: string;
+  senderId: string;
+  receiverId: string;
+  proposedStartTime: string;
+  proposedEndTime: string;
+  message: string;
+  status: 'pending' | 'accepted' | 'declined';
+  createdAt: string;
+  respondedAt?: string;
+}
+
+export interface ConfirmedMeeting {
+  id: string;
+  participantIds: string[];
+  startTime: string;
+  endTime: string;
+  title: string;
+  description?: string;
+  meetingLink?: string;
+  createdAt: string;
+}
+
+export type CalendarEvent = {
+  id: string;
+  title: string;
+  start: Date;
+  end: Date;
+  type: 'meeting' | 'availability';
+  data: ConfirmedMeeting | AvailabilitySlot;
+};
+
+export interface VideoCallSession {
+  id: string;
+  initiatorId: string;
+  participantId: string;
+  startTime: string;
+  endTime?: string;
+  status: 'incoming' | 'active' | 'completed' | 'declined';
+  isRecording: boolean;
+  duration?: number;
+}
+
+export interface CallParticipant {
+  userId: string;
+  name: string;
+  avatarUrl: string;
+  audioEnabled: boolean;
+  videoEnabled: boolean;
+  screenShareActive: boolean;
+}
+
+export interface DocumentFile {
+  id: string;
+  name: string;
+  type: 'pdf' | 'doc' | 'docx';
+  mimeType: string;
+  uploadedBy: string;
+  uploadedByName: string;
+  uploadDate: string;
+  status: 'draft' | 'in_review' | 'signed';
+  fileSize: number;
+  currentVersion: number;
+}
+
+export interface DocumentVersion {
+  id: string;
+  documentId: string;
+  versionNumber: number;
+  uploadedAt: string;
+  uploadedBy: string;
+  status: 'draft' | 'in_review' | 'signed';
+}
+
+export interface Signature {
+  id: string;
+  documentId: string;
+  signerId: string;
+  signerName: string;
+  signatureData: string; // Base64 encoded image data
+  timestamp: string;
+  status: 'pending' | 'signed' | 'declined';
+}
+
+export interface WalletTransaction {
+  id: string;
+  senderId: string;
+  senderName: string;
+  receiverId: string;
+  receiverName: string;
+  amount: number;
+  currency: string;
+  type: 'deposit' | 'withdraw' | 'transfer' | 'deal_funding';
+  status: 'pending' | 'completed' | 'failed';
+  timestamp: string;
+  description: string;
+}
+
+export interface WalletBalance {
+  userId: string;
+  balance: number;
+  currency: string;
+  lastUpdated: string;
+}
+
+export interface DealFunding {
+  id: string;
+  investorId: string;
+  entrepreneurId: string;
+  dealId: string;
+  amount: number;
+  status: 'proposed' | 'under_review' | 'accepted' | 'rejected';
+  fundingDate?: string;
+  createdAt: string;
+}
+
+export interface PasswordStrength {
+  level: 'weak' | 'fair' | 'good' | 'strong';
+  score: number;
+  feedback: string[];
+}
+
+export interface TwoFactorAuth {
+  userId: string;
+  enabled: boolean;
+  method: 'sms' | 'email' | 'authenticator';
+  lastVerified?: string;
+}
+
 export interface AuthContextType {
   user: User | null;
   login: (email: string, password: string, role: UserRole) => Promise<void>;
