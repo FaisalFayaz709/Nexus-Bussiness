@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Users, PieChart, Filter, Search, PlusCircle, Calendar, AlertCircle } from 'lucide-react';
+import { Users, PieChart, Filter, Search, PlusCircle, Calendar, AlertCircle, Wallet } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Card, CardBody, CardHeader } from '../../components/ui/Card';
 import { Input } from '../../components/ui/Input';
@@ -12,6 +12,7 @@ import { Entrepreneur } from '../../types';
 import { entrepreneurs } from '../../data/users';
 import { getRequestsFromInvestor } from '../../data/collaborationRequests';
 import { confirmedMeetings } from '../../data/confirmedMeetings';
+import { walletBalances } from '../../data/walletBalances';
 import { isAfter, startOfToday, parseISO } from 'date-fns';
 
 export const InvestorDashboard: React.FC = () => {
@@ -31,6 +32,14 @@ export const InvestorDashboard: React.FC = () => {
     .filter((m) => isAfter(parseISO(m.startTime), startOfToday()))
     .sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime())
     .slice(0, 2);
+
+  // Get wallet balance
+  const userWallet = walletBalances.find((wb) => wb.userId === user.id) || {
+    userId: user.id,
+    balance: 0,
+    currency: 'USD',
+    lastUpdated: new Date().toISOString(),
+  };
   
   // Filter entrepreneurs based on search and industry filters
   const filteredEntrepreneurs = entrepreneurs.filter(entrepreneur => {
@@ -196,6 +205,34 @@ export const InvestorDashboard: React.FC = () => {
 
         {/* Upcoming Meetings Sidebar */}
         <div className="space-y-4">
+          {/* Wallet Card */}
+          <Card>
+            <CardHeader className="flex justify-between items-center">
+              <h2 className="text-lg font-medium text-gray-900">Wallet</h2>
+              <Link to="/wallet" className="text-sm font-medium text-primary-600 hover:text-primary-500">
+                View
+              </Link>
+            </CardHeader>
+            <CardBody>
+              <div className="space-y-3">
+                <div>
+                  <p className="text-sm text-gray-600 mb-1">Available Balance</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    ${userWallet.balance.toLocaleString('en-US', {
+                      maximumFractionDigits: 0,
+                    })}
+                  </p>
+                </div>
+                <Link
+                  to="/wallet"
+                  className="block w-full text-center px-3 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 text-sm font-medium transition-colors"
+                >
+                  Manage Wallet
+                </Link>
+              </div>
+            </CardBody>
+          </Card>
+
           <Card>
             <CardHeader className="flex justify-between items-center">
               <h2 className="text-lg font-medium text-gray-900">Upcoming Meetings</h2>

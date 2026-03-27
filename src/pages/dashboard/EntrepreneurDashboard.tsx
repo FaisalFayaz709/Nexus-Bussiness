@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Users, Bell, Calendar, TrendingUp, AlertCircle, PlusCircle, Video } from 'lucide-react';
+import { Users, Bell, Calendar, TrendingUp, AlertCircle, PlusCircle, Video, Wallet } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Card, CardBody, CardHeader } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
@@ -13,6 +13,7 @@ import { getRequestsForEntrepreneur } from '../../data/collaborationRequests';
 import { investors, users } from '../../data/users';
 import { confirmedMeetings } from '../../data/confirmedMeetings';
 import { videoSessions } from '../../data/videoSessions';
+import { walletBalances } from '../../data/walletBalances';
 import { isAfter, startOfToday, parseISO } from 'date-fns';
 
 export const EntrepreneurDashboard: React.FC = () => {
@@ -54,6 +55,14 @@ export const EntrepreneurDashboard: React.FC = () => {
       ...call,
       otherUser: users.find((u) => u.id === (call.initiatorId === user.id ? call.participantId : call.initiatorId)),
     }));
+
+  // Get wallet balance
+  const userWallet = walletBalances.find((wb) => wb.userId === user.id) || {
+    userId: user.id,
+    balance: 0,
+    currency: 'USD',
+    lastUpdated: new Date().toISOString(),
+  };
   
   return (
     <div className="space-y-6 animate-fade-in">
@@ -128,6 +137,32 @@ export const EntrepreneurDashboard: React.FC = () => {
                 <p className="text-sm font-medium text-blue-700">Incoming Calls</p>
                 <h3 className="text-xl font-semibold text-blue-900">{incomingCalls.length}</h3>
               </div>
+            </div>
+          </CardBody>
+        </Card>
+
+        <Card className="bg-green-50 border border-green-100">
+          <CardBody>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center flex-1">
+                <div className="p-3 bg-green-100 rounded-full mr-4">
+                  <Wallet size={20} className="text-green-700" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-green-700">Wallet Balance</p>
+                  <h3 className="text-xl font-semibold text-green-900">
+                    ${userWallet.balance.toLocaleString('en-US', {
+                      maximumFractionDigits: 0,
+                    })}
+                  </h3>
+                </div>
+              </div>
+              <Link
+                to="/wallet"
+                className="text-green-600 hover:text-green-700 text-sm font-medium"
+              >
+                View
+              </Link>
             </div>
           </CardBody>
         </Card>

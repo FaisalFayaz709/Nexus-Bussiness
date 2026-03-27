@@ -162,6 +162,51 @@ export interface Signature {
   status: 'pending' | 'signed' | 'declined';
 }
 
+export interface WalletTransaction {
+  id: string;
+  senderId: string;
+  senderName: string;
+  receiverId: string;
+  receiverName: string;
+  amount: number;
+  currency: string;
+  type: 'deposit' | 'withdraw' | 'transfer' | 'deal_funding';
+  status: 'pending' | 'completed' | 'failed';
+  timestamp: string;
+  description: string;
+}
+
+export interface WalletBalance {
+  userId: string;
+  balance: number;
+  currency: string;
+  lastUpdated: string;
+}
+
+export interface DealFunding {
+  id: string;
+  investorId: string;
+  entrepreneurId: string;
+  dealId: string;
+  amount: number;
+  status: 'proposed' | 'under_review' | 'accepted' | 'rejected';
+  fundingDate?: string;
+  createdAt: string;
+}
+
+export interface PasswordStrength {
+  level: 'weak' | 'fair' | 'good' | 'strong';
+  score: number;
+  feedback: string[];
+}
+
+export interface TwoFactorAuth {
+  userId: string;
+  enabled: boolean;
+  method: 'sms' | 'email' | 'authenticator';
+  lastVerified?: string;
+}
+
 export interface AuthContextType {
   user: User | null;
   login: (email: string, password: string, role: UserRole) => Promise<void>;

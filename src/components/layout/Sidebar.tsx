@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { 
   Home, Building2, CircleDollarSign, Users, MessageCircle, 
-  Bell, FileText, Settings, HelpCircle, Calendar, Video, FileArchive
+  Bell, FileText, Settings, HelpCircle, Calendar, Video, FileArchive, Wallet, Lock
 } from 'lucide-react';
 
 interface SidebarItemProps {
@@ -45,6 +45,7 @@ export const Sidebar: React.FC = () => {
     { to: '/documents', icon: <FileText size={20} />, text: 'Documents' },
     { to: '/calendar', icon: <Calendar size={20} />, text: 'Calendar' },
     { to: '/document-chamber', icon: <FileArchive size={20} />, text: 'Document Chamber' },
+    { to: '/wallet', icon: <Wallet size={20} />, text: 'Wallet' },
   ];
   
   const investorItems = [
@@ -56,12 +57,14 @@ export const Sidebar: React.FC = () => {
     { to: '/deals', icon: <FileText size={20} />, text: 'Deals' },
     { to: '/calendar', icon: <Calendar size={20} />, text: 'Calendar' },
     { to: '/document-chamber', icon: <FileArchive size={20} />, text: 'Document Chamber' },
+    { to: '/wallet', icon: <Wallet size={20} />, text: 'Wallet' },
   ];
   
   const sidebarItems = user.role === 'entrepreneur' ? entrepreneurItems : investorItems;
   
   // Common items at the bottom
   const commonItems = [
+    { to: '/security-settings', icon: <Lock size={20} />, text: 'Security' },
     { to: '/settings', icon: <Settings size={20} />, text: 'Settings' },
     { to: '/help', icon: <HelpCircle size={20} />, text: 'Help & Support' },
   ];
