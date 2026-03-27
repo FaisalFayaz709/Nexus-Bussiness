@@ -68,6 +68,48 @@ export interface Document {
   ownerId: string;
 }
 
+export interface AvailabilitySlot {
+  id: string;
+  userId: string;
+  startTime: string; // ISO format
+  endTime: string;   // ISO format
+  dayOfWeek: number; // 0-6 (Sunday-Saturday)
+  isRecurring: boolean;
+  createdAt: string;
+}
+
+export interface MeetingRequest {
+  id: string;
+  senderId: string;
+  receiverId: string;
+  proposedStartTime: string;
+  proposedEndTime: string;
+  message: string;
+  status: 'pending' | 'accepted' | 'declined';
+  createdAt: string;
+  respondedAt?: string;
+}
+
+export interface ConfirmedMeeting {
+  id: string;
+  participantIds: string[];
+  startTime: string;
+  endTime: string;
+  title: string;
+  description?: string;
+  meetingLink?: string;
+  createdAt: string;
+}
+
+export type CalendarEvent = {
+  id: string;
+  title: string;
+  start: Date;
+  end: Date;
+  type: 'meeting' | 'availability';
+  data: ConfirmedMeeting | AvailabilitySlot;
+};
+
 export interface AuthContextType {
   user: User | null;
   login: (email: string, password: string, role: UserRole) => Promise<void>;

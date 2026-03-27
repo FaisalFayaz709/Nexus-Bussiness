@@ -30,6 +30,11 @@ import { DealsPage } from './pages/deals/DealsPage';
 // Chat Pages
 import { ChatPage } from './pages/chat/ChatPage';
 
+// Calendar Pages
+import { CalendarPage } from './pages/calendar/CalendarPage';
+import { AvailabilityPage } from './pages/calendar/AvailabilityPage';
+import { MeetingRequestsPage } from './pages/calendar/MeetingRequestsPage';
+
 function App() {
   return (
     <AuthProvider>
@@ -88,6 +93,13 @@ function App() {
           <Route path="/chat" element={<DashboardLayout />}>
             <Route index element={<ChatPage />} />
             <Route path=":userId" element={<ChatPage />} />
+          </Route>
+          
+          {/* Calendar Routes */}
+          <Route path="/calendar" element={<DashboardLayout />}>
+            <Route index element={<CalendarPage />} />
+            <Route path="availability" element={<AvailabilityPage />} />
+            <Route path="requests" element={<MeetingRequestsPage />} />
           </Route>
           
           {/* Redirect root to login */}
