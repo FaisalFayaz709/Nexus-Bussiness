@@ -35,6 +35,12 @@ import { CalendarPage } from './pages/calendar/CalendarPage';
 import { AvailabilityPage } from './pages/calendar/AvailabilityPage';
 import { MeetingRequestsPage } from './pages/calendar/MeetingRequestsPage';
 
+// Video Call Pages
+import { VideoCallPage } from './pages/video/VideoCallPage';
+
+// Document Pages
+import { DocumentChamberPage } from './pages/documents/DocumentChamberPage';
+
 function App() {
   return (
     <AuthProvider>
@@ -100,6 +106,16 @@ function App() {
             <Route index element={<CalendarPage />} />
             <Route path="availability" element={<AvailabilityPage />} />
             <Route path="requests" element={<MeetingRequestsPage />} />
+          </Route>
+          
+          {/* Video Call Routes */}
+          <Route path="/video-call" element={<DashboardLayout />}>
+            <Route path=":callId" element={<VideoCallPage />} />
+          </Route>
+          
+          {/* Document Chamber Routes */}
+          <Route path="/document-chamber" element={<DashboardLayout />}>
+            <Route index element={<DocumentChamberPage />} />
           </Route>
           
           {/* Redirect root to login */}

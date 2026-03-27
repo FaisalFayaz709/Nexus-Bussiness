@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Users, Bell, Calendar, TrendingUp, AlertCircle, PlusCircle } from 'lucide-react';
+import { Users, Bell, Calendar, TrendingUp, AlertCircle, PlusCircle, Video } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Card, CardBody, CardHeader } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
@@ -10,8 +10,9 @@ import { ConfirmedMeetingCard } from '../../components/calendar/ConfirmedMeeting
 import { useAuth } from '../../context/AuthContext';
 import { CollaborationRequest } from '../../types';
 import { getRequestsForEntrepreneur } from '../../data/collaborationRequests';
-import { investors } from '../../data/users';
+import { investors, users } from '../../data/users';
 import { confirmedMeetings } from '../../data/confirmedMeetings';
+import { videoSessions } from '../../data/videoSessions';
 import { isAfter, startOfToday, parseISO } from 'date-fns';
 
 export const EntrepreneurDashboard: React.FC = () => {
@@ -45,6 +46,14 @@ export const EntrepreneurDashboard: React.FC = () => {
     .filter((m) => isAfter(parseISO(m.startTime), startOfToday()))
     .sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime())
     .slice(0, 2);
+
+  // Get incoming video calls
+  const incomingCalls = videoSessions
+    .filter((call) => call.status === 'incoming')
+    .map((call) => ({
+      ...call,
+      otherUser: users.find((u) => u.id === (call.initiatorId === user.id ? call.participantId : call.initiatorId)),
+    }));
   
   return (
     <div className="space-y-6 animate-fade-in">
@@ -104,6 +113,20 @@ export const EntrepreneurDashboard: React.FC = () => {
               <div>
                 <p className="text-sm font-medium text-accent-700">Upcoming Meetings</p>
                 <h3 className="text-xl font-semibold text-accent-900">{upcomingMeetings.length}</h3>
+              </div>
+            </div>
+          </CardBody>
+        </Card>
+
+        <Card className="bg-blue-50 border border-blue-100">
+          <CardBody>
+            <div className="flex items-center">
+              <div className="p-3 bg-blue-100 rounded-full mr-4">
+                <Video size={20} className="text-blue-700" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-blue-700">Incoming Calls</p>
+                <h3 className="text-xl font-semibold text-blue-900">{incomingCalls.length}</h3>
               </div>
             </div>
           </CardBody>

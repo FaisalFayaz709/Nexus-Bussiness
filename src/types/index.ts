@@ -110,6 +110,58 @@ export type CalendarEvent = {
   data: ConfirmedMeeting | AvailabilitySlot;
 };
 
+export interface VideoCallSession {
+  id: string;
+  initiatorId: string;
+  participantId: string;
+  startTime: string;
+  endTime?: string;
+  status: 'incoming' | 'active' | 'completed' | 'declined';
+  isRecording: boolean;
+  duration?: number;
+}
+
+export interface CallParticipant {
+  userId: string;
+  name: string;
+  avatarUrl: string;
+  audioEnabled: boolean;
+  videoEnabled: boolean;
+  screenShareActive: boolean;
+}
+
+export interface DocumentFile {
+  id: string;
+  name: string;
+  type: 'pdf' | 'doc' | 'docx';
+  mimeType: string;
+  uploadedBy: string;
+  uploadedByName: string;
+  uploadDate: string;
+  status: 'draft' | 'in_review' | 'signed';
+  fileSize: number;
+  currentVersion: number;
+}
+
+export interface DocumentVersion {
+  id: string;
+  documentId: string;
+  versionNumber: number;
+  uploadedAt: string;
+  uploadedBy: string;
+  status: 'draft' | 'in_review' | 'signed';
+}
+
+export interface Signature {
+  id: string;
+  documentId: string;
+  signerId: string;
+  signerName: string;
+  signatureData: string; // Base64 encoded image data
+  timestamp: string;
+  status: 'pending' | 'signed' | 'declined';
+}
+
 export interface AuthContextType {
   user: User | null;
   login: (email: string, password: string, role: UserRole) => Promise<void>;
